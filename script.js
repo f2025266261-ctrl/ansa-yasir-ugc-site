@@ -42,3 +42,37 @@ contactForm.addEventListener('submit', (e) => {
 
   window.location.href = `mailto:lifestylewithansa@gmail.com?subject=${subject}&body=${body}`;
 });
+
+// Copy discount code
+document.querySelectorAll('.code-copy-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const code = btn.dataset.code;
+    if (!code) return;
+
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(code);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = code;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+
+      btn.classList.add('copied');
+      const textSpan = btn.querySelector('.copy-text');
+      if (textSpan) textSpan.textContent = 'Copied!';
+
+      setTimeout(() => {
+        btn.classList.remove('copied');
+        if (textSpan) textSpan.textContent = 'Copy';
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  });
+});
